@@ -36,65 +36,72 @@ class Api < Sinatra::Base
     def initialize
       super
       @proveedores = {
-        "id": 1001,
+        "id_proveedor": 1001,
         "nombre": "GARZON Y CIA.",
-        "tarifa": 15000,
         "direccion": "Av. Belgrano 164 1 27",
         "ciudad": "Alta Gracia",
         "provincia": "Córdoba",
         "pais": "Argentina",
         "correo": "garzon@empresa.com",
-        "materiales": ["Vidrio reciclado", "Plástico reciclado", "Madera"]},
-        
+        },
         
         {
-        "id": 1002,
+        "id_proveedor": 1002,
         "nombre": "SM INDUSTRIAL SRL",
-        "tarifa": 12000,
         "direccion": "Av. Facundo Zuviría 5842",
         "ciudad": "Santa Fe",
         "provincia": "Santa Fe",
         "pais": "Argentina",
         "correo": "smindustrial@empresa.com",
-        "materiales": ["Corcho", "Aluminio", "Acetato de madera reciclada"]},
+        },
         
         {
-        "id": 1003,
+        "id_proveedor": 1003,
         "nombre": "MAAS SRL",
-        "tarifa": 17000,
         "direccion": "Av. Chile 245",
         "ciudad": "Río de Janeiro",
         "provincia": "Río de Janeiro",
         "pais": "Brasil",
         "correo": "maas@empresa.com",
-        "materiales": ["Bambú", "Corcho", "Aluminio"]},
+        },
         
         {
-        "id": 1004,
+        "id_proveedor": 1004,
         "nombre": "DOMINA S.A.",
-        "tarifa": 14000,
         "direccion": "Cl. 54 # 57-60, La Candelaria",
         "ciudad": "Medellín",
         "provincia": "Antioquia",
         "pais": "Colombia",
         "correo": "domina@empresa.com",
-        "materiales": ["Vidrio reciclado", "Plástico reciclado", "Bambú"]},
+        },
         
         {
-        "id": 1005,
+        "id_proveedor": 1005,
         "nombre": "EMPRESAS CMPC S.A.",
-        "tarifa": 12500,
         "direccion": "Agustinas 1343",
         "ciudad": "Santiago de Chile",
         "provincia": "Región Metropolitana",
         "pais": "Chile",
         "correo": "cmpc@empresa.com",
-        "materiales": ["Aluminio", "Acetato de fibra de algodón", "Acetato de madera reciclada"]}
+        }
     end
     
    
-    get '/materials' do
-      @proveedores.to_json
+    post '/search' do
+      fecha = params[:fecha]
+      materiales = JSON.parse request.body.read
+      arr = []
+      materiales.map(){|k, v|
+        proveedor = @proveedores.sample 1
+        costo = v * 10 + 1000 + (rand 10000)
+        id_consulta = 5000 + (rand 999)
+        proveedor[0]["precio"] = costo.to_s + 'US$'
+        proveedor[0]["id_consulta"] = id_consulta
+        proveedor[0]["material"]= k.to_s
+        proveedor[0]["cantidad"]= v  
+        arr.push(proveedor)
+      }
+      arr.to_json
     end
       
     post '/reserve' do
