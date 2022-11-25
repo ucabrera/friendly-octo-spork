@@ -96,7 +96,7 @@ class Api < Sinatra::Base
         proveedor["id_consulta"] = 5000 + (rand 999)
         proveedor["material"]= k
         proveedor["cantidad"]= v
-        proveedor["datos"] = @proveedores sample 1
+        proveedor["datos"] = @proveedores.sample 1
         arr.push(proveedor)
       }
       arr.to_json
