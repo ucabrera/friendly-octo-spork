@@ -92,13 +92,11 @@ class Api < Sinatra::Base
       materiales = JSON.parse request.body.read
       arr = []
       materiales.map(){|k, v|
-        proveedor = @proveedores.sample 1
-        costo = v * 10 + 1000 + (rand 10000)
-        id_consulta = 5000 + (rand 999)
-        proveedor[0]["precio"] = costo.to_s + 'US$'
-        proveedor[0]["id_consulta"] = id_consulta
-        proveedor[0]["material"]= k.to_s
-        proveedor[0]["cantidad"]= v  
+        proveedor["precio"] = (v * 10 + 1000 + (rand 10000)).to_s + 'US$'
+        proveedor["id_consulta"] = 5000 + (rand 999)
+        proveedor["material"]= k
+        proveedor["cantidad"]= v
+        proveedor["datos"] = @proveedores sample 1
         arr.push(proveedor)
       }
       arr.to_json
