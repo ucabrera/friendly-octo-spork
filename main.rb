@@ -11,9 +11,11 @@ class JwtAuth
   
   def call env
     begin
-      options = { algorithm: 'HS256', iss: ENV['JWT_ISSUER'] }
+      #options = { algorithm: 'HS256', iss: ENV['JWT_ISSUER'] }
+      options = { algorithm: 'HS256', iss: 'JWT_ISSUER' }
       bearer = env.fetch('HTTP_AUTHORIZATION', '').slice(7..-1)
-      payload, header = JWT.decode bearer, ENV['JWT_SECRET'], true, options 
+      #payload, header = JWT.decode bearer, ENV['JWT_SECRET'], true, options 
+      payload, header = JWT.decode bearer, 'JWT_SECRET', true, options 
       env[:user] = payload['user']
       @app.call env
       rescue JWT::ExpiredSignature
@@ -92,11 +94,12 @@ class Api < Sinatra::Base
       materiales = JSON.parse request.body.read
       arr = []
       materiales.map(){|k, v|
+        proveedor = {}
         proveedor["precio"] = (v * 10 + 1000 + (rand 10000)).to_s + 'US$'
         proveedor["id_consulta"] = 5000 + (rand 999)
         proveedor["material"]= k
         proveedor["cantidad"]= v
-        proveedor["datos"] = @proveedores.sample 1
+        proveedor["proveedor"] = @proveedores.sample 1
         arr.push(proveedor)
       }
       arr.to_json
@@ -164,14 +167,15 @@ class Api < Sinatra::Base
     private
 
     def token username
-      JWT.encode payload(username), ENV['JWT_SECRET'], 'HS256'
+      JWT.encode payload(username), 'JWT_SECRET', 'HS256'
     end
     
     def payload username
       {
         exp: Time.now.to_i + 1600,
         iat: Time.now.to_i,
-        iss: ENV['JWT_ISSUER'],
+        #iss: ENV['JWT_ISSUER'],
+        iss: 'JWT_ISSUER',
         user: {
           username: username
         }
